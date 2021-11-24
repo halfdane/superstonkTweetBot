@@ -2,9 +2,7 @@ import sys, getopt, os
 import logging
 
 from twitter_front import TwitterFront
-
-def handle_message(data):
-    logging.info(f"new tweet from {data['name']}: {data['url']} ")
+from reddit_front import RedditFront
 
 def main(argv):
     test = False
@@ -16,6 +14,10 @@ def main(argv):
     for opt, arg in opts:
         if opt == '-t':
             test = True
+
+    redditFront = RedditFront(test=test)
+    def handle_message(data):
+        redditFront.create_tweet_post(data)
 
     twitter_front = TwitterFront(handle_message, test=test)
     twitter_front.stream()

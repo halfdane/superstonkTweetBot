@@ -20,6 +20,7 @@ You have to export the following environment variables:
     export twitter_api_access_token="twitter_api_access_token"
     export twitter_api_access_token_secret="twitter_api_access_token_secret"
 
+    export target_subreddit="Superstonk or a test subreddit"
 
 Afterwards execute
 
