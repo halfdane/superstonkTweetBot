@@ -1,6 +1,5 @@
-import os
-
 import tweepy
+import os
 import logging
 
 class TwitterFront(tweepy.Stream):
