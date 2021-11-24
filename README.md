@@ -1,19 +1,25 @@
-# diamantenbot
+# superstonkTweetBot
 
-a reddit bot that fetches the prices of $GME in tradegate (in €) and calculates it to USD using the current conversion rate.
-That information is then posted into the daily thread of superstonk.
+a bot that monitors a select list of twitter handles and submits a post into superstonk whenever one of them tweets
 
-Passing the parameter '-t' enables the test-mode which doesn't actually creates a reddit comment.
+Passing the parameter '-t' enables the test-mode which doesn't create a reddit post.
 
 
 # Run
 
 You have to export the following environment variables:
- 
+
     export client_id="some-client-id"
     export client_secret="random gibberish"
     export reddit_username="half_dane"
     export reddit_password="very_secret"
+
+    export twitter_api_key="twitter_api_key"
+    export twitter_api_secret="twitter_api_secret"
+    export twitter_api_bearer_token="twitter_api_bearer_token"
+    export twitter_api_access_token="twitter_api_access_token"
+    export twitter_api_access_token_secret="twitter_api_access_token_secret"
+
 
 Afterwards execute
 
