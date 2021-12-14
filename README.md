@@ -9,8 +9,8 @@ Passing the parameter '-t' enables the test-mode which doesn't create a reddit p
 
 You have to export the following environment variables:
 
-    export client_id="some-client-id"
-    export client_secret="random gibberish"
+    export reddit_client_id="some-client-id"
+    export reddit_client_secret="random gibberish"
     export reddit_username="half_dane"
     export reddit_password="very_secret"
 
