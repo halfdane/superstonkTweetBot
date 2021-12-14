@@ -31,6 +31,10 @@ class TwitterFront(tweepy.Stream):
 
     # Inherited from tweepy.Stream
     def on_status(self, tweet):
+        if not tweet.author.screen_name in self.HANDLES_TO_FOLLOW:
+            self.LOG.info(f"Ignoring tweet from author: {tweet.author.screen_name}")
+            return
+
         url=f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         data = {
             'url': url,
@@ -46,5 +50,5 @@ class TwitterFront(tweepy.Stream):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    twitter_front = TwitterFront(lambda x: logging.info(f"new tweet from {x['name']}: {x['url']} "), test=True)
+    twitter_front = TwitterFront(lambda x: logging.info(f"new tweet {x}"), test=False)
     twitter_front.stream()
