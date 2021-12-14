@@ -1,1 +1,1 @@
-worker: make run
+worker: src/main.py
