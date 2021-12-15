@@ -1,21 +1,25 @@
-import os
 import requests
 import logging
 
 class ScreenshotFront:
+    LOG = logging.getLogger(__name__)
+
     def __init__(self, test=False):
         self.test = test
 
-        self.tweetpik_api_key = os.environ["tweetpik_api_key"]
+    def take_screenshot(self, handle, tweet_id):
+        output_file=f"screenshot_{handle}_{tweet_id}.png"
 
-    def take_screenshot(self, tweetId):
-        r = requests.post('https://tweetpik.com/api/images',
-            data="{\"tweetId\": \"%s\"}" % tweetId,
-            headers={'Authorization': self.tweetpik_api_key, "Content-Type": "application/json"})
-
-        print(r.json()['url'])
+        if self.test:
+            self.LOG.info("running in test mode, so not actually taking a screenshot")
+        else:
+            self.LOG.info(f"Taking screenshot of {handle} {tweet_id}")
+            r = requests.get(f"https://tweets-as-an-image.herokuapp.com/tweet?twitterHandle={handle}&id={tweet_id}")
+            with open(output_file, 'wb') as f:
+                f.write(r.content)
+        return output_file
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    screenshot_front = ScreenshotFront(test=False)
-    screenshot_front.take_screenshot("1463764408996409347")
+    screenshot_front = ScreenshotFront()
+    output = screenshot_front.take_screenshot("GameStop", "1470793223962517512")

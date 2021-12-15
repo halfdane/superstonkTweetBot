@@ -2,7 +2,6 @@ import tweepy
 import os
 import logging
 
-import datetime
 import pytz
 
 nyse = pytz.timezone('US/Eastern')
@@ -44,9 +43,11 @@ class TwitterFront(tweepy.Stream):
         url=f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         data = {
             'url': url,
-            'name': tweet.user.name,
-            'created_at': tweet.created_at.astimezone(nyse)
+            'screen_name': tweet.user.screen_name,
+            'created_at': tweet.created_at.astimezone(nyse),
+            'tweet_id': tweet.id
         }
+        self.LOG.info(f"consuming {data}")
         self.consume(data)
 
     def stream(self):
