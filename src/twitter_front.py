@@ -2,6 +2,12 @@ import tweepy
 import os
 import logging
 
+import datetime
+import pytz
+
+nyse = pytz.timezone('US/Eastern')
+
+
 class TwitterFront(tweepy.Stream):
     HANDLES_TO_FOLLOW = ['ryancohen', 'GameStop', 'GMEdd']
     LOG = logging.getLogger(__name__)
@@ -38,7 +44,8 @@ class TwitterFront(tweepy.Stream):
         url=f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         data = {
             'url': url,
-            'name': tweet.user.name
+            'name': tweet.user.name,
+            'created_at': tweet.created_at.astimezone(nyse)
         }
         self.consume(data)
 
@@ -50,5 +57,5 @@ class TwitterFront(tweepy.Stream):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    twitter_front = TwitterFront(lambda x: logging.info(f"new tweet {x}"), test=False)
+    twitter_front = TwitterFront(lambda x: logging.info(f"new tweet {x}"), test=True)
     twitter_front.stream()

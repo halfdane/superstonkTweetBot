@@ -32,7 +32,7 @@ class RedditFront:
         self.test = test
 
     def create_tweet_post(self, data):
-        title=f"New Tweet from {data['name']}",
+        title=f"New Tweet from {data['name']} [{data['created_at'].strftime('%Y-%m-%d %H:%M:%S')}]",
         url=data['url']
         flair_id=self.flair['id']
 
