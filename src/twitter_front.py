@@ -31,7 +31,7 @@ class TwitterFront(tweepy.Stream):
 
     # Inherited from tweepy.Stream
     def on_status(self, tweet):
-        if not tweet.author.screen_name in self.HANDLES_TO_FOLLOW:
+        if (not tweet.author.screen_name in self.HANDLES_TO_FOLLOW) and (not self.test):
             self.LOG.info(f"Ignoring tweet from author: {tweet.author.screen_name}")
             return
 
@@ -46,7 +46,7 @@ class TwitterFront(tweepy.Stream):
         if (self.test):
             self.filter(track="Twitter")
         else:
-            self.filter(follow=self.user_ids_to_follow)
+            self.filter(follow=self.user_ids_to_follow, threaded=True)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
