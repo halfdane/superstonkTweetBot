@@ -50,7 +50,14 @@ class RedditFront:
         """)
         if (not self.test):
             post = self.subreddit.submit_image(title=title, image_path=image_file, flair_id=flair_id)
-            post.reply(f"Link: {url}")
+            message_parts = [
+                f"Link: {url}",
+                "  ",
+                f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)  "
+                f"If you have ideas on how to improve this bot, please post them as response to this comment"
+            ]
+
+            post.reply('\n'.join(message_parts))
 
 
 if __name__ == "__main__":

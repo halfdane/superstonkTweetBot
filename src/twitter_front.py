@@ -40,6 +40,8 @@ class TwitterFront(tweepy.Stream):
             self.LOG.info(f"Ignoring tweet from author: {tweet.author.screen_name}")
             return
 
+        self.LOG.info(f"New Tweet: {tweet}")
+
         url=f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         data = {
             'url': url,
