@@ -8,7 +8,9 @@ nyse = pytz.timezone('US/Eastern')
 
 
 class TwitterFront(tweepy.Stream):
-    HANDLES_TO_FOLLOW = ['ryancohen', 'GameStop', 'GMEdd']
+    HANDLES_TO_FOLLOW = ['ryancohen',
+                         # 'GameStop', # they are literally just tweeting promotional stuff - don't follow them for now
+                         'GMEdd']
     LOG = logging.getLogger(__name__)
 
     def __init__(self, consume, test=False):
