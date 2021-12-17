@@ -14,9 +14,8 @@ venv/touchfile: requirements.txt
 	echo "###########################################"
 	echo "Setting up virtualenv with dependencies..."
 	echo "###########################################"
-	pip install virtualenv
-	echo $(shell which python3.8)
-	python3 -m virtualenv -p $(shell which python3.8) venv
+	echo $(shell which python3)
+	python3 -m virtualenv -p $(shell which python3) venv
 	./venv/bin/pip install --upgrade pip
 	./venv/bin/pip install -r "requirements.txt"
 	touch venv/touchfile
