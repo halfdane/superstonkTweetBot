@@ -6,23 +6,17 @@ fake_run: venv
 
 .PHONY: run
 run: venv
-	./venv/bin/python src/main.py
-
-ssh_screen:
-	echo "Exit with CTRL-a d"
-	ssh -t pi@redditbot screen -R superstonkTweetBot
+	source .envrc && ./venv/bin/python -u src/main.py
 
 ssh_deploy:
 	ssh -t pi@redditbot 'cd superstonkTweetBot && make deploy'
 
 deploy:
 	echo "Updating codebase"
-	git pull --rebase
-	echo "Killing running screen session"
-	screen -ls "superstonkTweetBot" && screen -S superstonkTweetBot -p 0 -X quit || echo "Nothing to kill"
-	echo "Starting new session within screen"
-	screen -dmS superstonkTweetBot make run
-	echo "That's all folks"
+	echo git pull --rebase
+	sudo systemctl restart superstonkTweetBot.service
+	sleep 5
+	systemctl status superstonkTweetBot.service --no-pager
 
 
 venv: venv/touchfile
