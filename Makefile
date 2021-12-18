@@ -22,6 +22,7 @@ deploy:
 	screen -ls "superstonkTweetBot" && screen -S superstonkTweetBot -p 0 -X quit || echo "Nothing to kill"
 	echo "Starting new session within screen"
 	screen -dmS superstonkTweetBot make run
+	echo "That's all folks"
 
 
 venv: venv/touchfile
