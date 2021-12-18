@@ -13,14 +13,15 @@ ssh_screen:
 	ssh -t pi@redditbot screen -R superstonkTweetBot
 
 ssh_deploy:
-	ssh -t pi@redditbot make -f superstonkTweetBot/Makefile deploy
+	ssh -t pi@redditbot 'cd superstonkTweetBot && make deploy'
 
 deploy:
 	echo "Updating codebase"
-	pwd
 	git pull --rebase
 	echo "Killing running screen session"
+	screen -S superstonkTweetBot -p 0 -X quit
 	echo "Starting new session within screen"
+	screen -dmS superstonkTweetBot make run
 
 
 venv: venv/touchfile
