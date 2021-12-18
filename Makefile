@@ -19,9 +19,9 @@ deploy: install
 	systemctl status superstonkTweetBot.service --no-pager
 
 install: /lib/systemd/system/superstonkTweetBot.service
-    sudo cp superstonkTweetBot.service /lib/systemd/system/
-    sudo systemctl daemon-reload
-    sudo systemctl start test.service
+	sudo cp superstonkTweetBot.service /lib/systemd/system/
+	sudo systemctl daemon-reload
+	sudo systemctl start test.service
 
 
 venv: venv/touchfile
