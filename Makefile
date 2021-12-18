@@ -11,12 +11,17 @@ run: venv
 ssh_deploy:
 	ssh -t pi@redditbot 'cd superstonkTweetBot && make deploy'
 
-deploy:
+deploy: install
 	echo "Updating codebase"
 	echo git pull --rebase
 	sudo systemctl restart superstonkTweetBot.service
 	sleep 5
 	systemctl status superstonkTweetBot.service --no-pager
+
+install: /lib/systemd/system/superstonkTweetBot.service
+    sudo cp superstonkTweetBot.service /lib/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl start test.service
 
 
 venv: venv/touchfile
