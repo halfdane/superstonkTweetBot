@@ -8,6 +8,21 @@ fake_run: venv
 run: venv
 	./venv/bin/python src/main.py
 
+ssh_screen:
+	echo "Exit with CTRL-a d"
+	ssh -t pi@redditbot screen -R superstonkTweetBot
+
+ssh_deploy:
+	ssh -t pi@redditbot make -f superstonkTweetBot/Makefile deploy
+
+deploy:
+	echo "Updating codebase"
+	pwd
+	git pull --rebase
+	echo "Killing running screen session"
+	echo "Starting new session within screen"
+
+
 venv: venv/touchfile
 
 venv/touchfile: requirements.txt
