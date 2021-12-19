@@ -15,9 +15,7 @@ ssh_deploy:
 	ssh -t $(RASPI_USER) '\
 	cd $(PROJECT) && \
 	git pull --rebase && \
-	sudo systemctl restart $(PROJECT).service && \
-	sleep 5 && \
-	systemctl status $(PROJECT).service --no-pager'
+	sudo systemctl restart $(PROJECT).service'
 
 ssh_logs:
 	ssh -t $(RASPI_USER) 'journalctl -u $(PROJECT).service -f'
