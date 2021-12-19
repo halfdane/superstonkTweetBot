@@ -1,5 +1,8 @@
 SHELL := /bin/bash
 
+PROJECT=superstonkTweetBot
+RASPI_USER=pi@redditbot
+
 .PHONY: fake_run
 fake_run: venv
 	source .envrc && ./venv/bin/python -u src/main.py -t
@@ -9,21 +12,24 @@ run: venv
 	source .envrc && ./venv/bin/python -u src/main.py
 
 ssh_deploy:
-	ssh -t pi@redditbot '\
-	cd superstonkTweetBot && \
-	echo git pull --rebase && \
-	sudo systemctl restart superstonkTweetBot.service && \
+	ssh -t $(RASPI_USER) '\
+	cd $(PROJECT) && \
+	git pull --rebase && \
+	sudo systemctl restart $(PROJECT).service && \
 	sleep 5 && \
-	systemctl status superstonkTweetBot.service --no-pager'
+	systemctl status $(PROJECT).service --no-pager'
+
+ssh_logs:
+	ssh -t $(RASPI_USER) 'journalctl -u $(PROJECT).service -f'
 
 ssh_install:
-	ssh -t pi@redditbot 'git clone https://github.com/halfdane/superstonkTweetBot.git'
-	scp .envrc pi@redditbot:~/superstonkTweetBot
-	ssh -t pi@redditbot '\
-	cd superstonkTweetBot && \
-	sudo cp superstonkTweetBot.service /lib/systemd/system/ && \
+	ssh -t $(RASPI_USER) 'git clone https://github.com/halfdane/$(PROJECT).git'
+	scp .envrc $(RASPI_USER):~/$(PROJECT)
+	ssh -t $(RASPI_USER) '\
+	cd $(PROJECT) && \
+	sudo cp $(PROJECT).service /lib/systemd/system/ && \
 	sudo systemctl daemon-reload && \
-	sudo systemctl restart superstonkTweetBot.service'
+	sudo systemctl restart $(PROJECT).service'
 
 venv: venv/touchfile
 
