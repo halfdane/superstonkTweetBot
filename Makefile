@@ -2,27 +2,28 @@ SHELL := /bin/bash
 
 .PHONY: fake_run
 fake_run: venv
-	./venv/bin/python src/main.py -t
+	source .envrc && ./venv/bin/python -u src/main.py -t
 
 .PHONY: run
 run: venv
 	source .envrc && ./venv/bin/python -u src/main.py
 
 ssh_deploy:
-	ssh -t pi@redditbot 'cd superstonkTweetBot && make deploy'
+	ssh -t pi@redditbot '\
+	cd superstonkTweetBot && \
+	echo git pull --rebase && \
+	sudo systemctl restart superstonkTweetBot.service && \
+	sleep 5 && \
+	systemctl status superstonkTweetBot.service --no-pager'
 
-deploy: install
-	echo "Updating codebase"
-	echo git pull --rebase
-	sudo systemctl restart superstonkTweetBot.service
-	sleep 5
-	systemctl status superstonkTweetBot.service --no-pager
-
-install: /lib/systemd/system/superstonkTweetBot.service
-	sudo cp superstonkTweetBot.service /lib/systemd/system/
-	sudo systemctl daemon-reload
-	sudo systemctl start test.service
-
+ssh_install:
+	ssh -t pi@redditbot 'git clone https://github.com/halfdane/superstonkTweetBot.git'
+	scp .envrc pi@redditbot:~/superstonkTweetBot
+	ssh -t pi@redditbot '\
+	cd superstonkTweetBot && \
+	sudo cp superstonkTweetBot.service /lib/systemd/system/ && \
+	sudo systemctl daemon-reload && \
+	sudo systemctl restart superstonkTweetBot.service'
 
 venv: venv/touchfile
 
