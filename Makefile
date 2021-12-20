@@ -11,15 +11,22 @@ fake_run: venv
 run: venv
 	source .envrc && ./venv/bin/python -u src/main.py
 
+.PHONY: ssh_deploy
 ssh_deploy:
 	ssh -t $(RASPI_USER) '\
 	cd $(PROJECT) && \
 	git pull --rebase && \
 	sudo systemctl restart $(PROJECT).service'
 
+.PHONY: ssh_logs
 ssh_logs:
 	ssh -t $(RASPI_USER) 'journalctl -u $(PROJECT).service -f'
 
+.PHONY: log_server
+log_server:
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+.PHONY: ssh_install
 ssh_install:
 	ssh -t $(RASPI_USER) 'git clone https://github.com/halfdane/$(PROJECT).git'
 	scp .envrc $(RASPI_USER):~/$(PROJECT)
@@ -41,6 +48,7 @@ venv/touchfile: requirements.txt
 	./venv/bin/pip install -r "requirements.txt"
 	touch venv/touchfile
 
+.PHONY: clean
 clean:
 	rm -rf venv
 	find -iname "*.pyc" -delete

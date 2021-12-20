@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Logs of the superstonkTweetBot</title>
+    <style>
+      #content {
+        font: bold 15px arial;
+        margin: auto;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="content"></div>
+    
+    <script>
+      var ws = new WebSocket('ws://redditbot:1234/');
+      ws.onopen = function() {
+        document.body.style.backgroundColor = '#cfc';
+      };
+      ws.onclose = function() {
+        document.body.style.backgroundColor = null;
+      };
+      ws.onmessage = function(event) {
+	var p = document.createElement("p");
+	p.textContent = event.data;
+        document.getElementById('content').appendChild(p);
+      };
+    </script>
+    
+  </body>
+</html>
