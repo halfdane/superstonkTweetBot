@@ -13,10 +13,10 @@ class RedditFront:
         self.LOG.debug("Logging in..")
 
         self.reddit = praw.Reddit(username=os.environ["reddit_username"],
-                        password=os.environ["reddit_password"],
-                        client_id=os.environ["reddit_client_id"],
-                        client_secret=os.environ["reddit_client_secret"],
-                        user_agent=user_agent)
+                                  password=os.environ["reddit_password"],
+                                  client_id=os.environ["reddit_client_id"],
+                                  client_secret=os.environ["reddit_client_secret"],
+                                  user_agent=user_agent)
         self.LOG.info(f"Logged in as {self.reddit.user.me()}")
 
         self.reddit.validate_on_submit = True
@@ -37,28 +37,34 @@ class RedditFront:
         self.test = test
 
     def create_tweet_post(self, data):
-        image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
-
-        title = f"New Tweet from {data['screen_name']} [{data['created_at'].strftime('%Y-%m-%d %H:%M:%S')}] - link in comments",
+        title = f"New Tweet from {data['screen_name']} [{data['created_at'].strftime('%Y-%m-%d %H:%M')}] - link/image in comments",
         url = data['url']
         flair_id = self.flair['id']
 
         self.LOG.info(f"""Submitting new post:
             title: {title}
             url: {url}
-            image: {image_file}
         """)
         if (not self.test):
-            post = self.subreddit.submit_image(title=title, image_path=image_file, flair_id=flair_id)
-            message_parts = [
-                f"Link: {url}",
+            url_post = self.subreddit.submit(title=title, url=url, flair_id=flair_id)
+
+            image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
+            image_post = self.subreddit.submit_image(title=title, image_path=image_file, flair_id=flair_id)
+            image_post.reply('\n'.join([
+                f"Tweet: {url}",
                 "  ",
-                f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)  "
+                f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
+                "  ",
                 f"If you have ideas on how to improve this bot, please post them as response to this comment"
-            ]
+            ]))
 
-            post.reply('\n'.join(message_parts))
-
+            url_post.reply('\n'.join([
+                f"Image: {image_post.url}",
+                "  ",
+                f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
+                "  ",
+                f"If you have ideas on how to improve this bot, please post them as response to this comment"
+            ]))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
