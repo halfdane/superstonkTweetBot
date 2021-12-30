@@ -37,7 +37,7 @@ class RedditFront:
         self.test = test
 
     def create_tweet_post(self, data):
-        title = f"New Tweet from {data['screen_name']} [{data['created_at'].strftime('%Y-%m-%d %H:%M')}] - link/image in comments",
+        title = f"New Tweet from {data['screen_name']} [{data['created_at'].strftime('%Y-%m-%d %H:%M')}] - image in comments",
         url = data['url']
         flair_id = self.flair['id']
 
@@ -50,13 +50,6 @@ class RedditFront:
 
             image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
             image_post = self.subreddit.submit_image(title=title, image_path=image_file, flair_id=flair_id)
-            image_post.reply('\n'.join([
-                f"Tweet: {url}",
-                "  ",
-                f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
-                "  ",
-                f"If you have ideas on how to improve this bot, please post them as response to this comment"
-            ]))
 
             url_post.reply('\n'.join([
                 f"Image: {image_post.url}",
@@ -65,6 +58,8 @@ class RedditFront:
                 "  ",
                 f"If you have ideas on how to improve this bot, please post them as response to this comment"
             ]))
+
+            image_post.delete()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
