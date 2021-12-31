@@ -10,9 +10,6 @@ nyse = pytz.timezone('US/Eastern')
 
 
 class TwitterFront(tweepy.Stream):
-    HANDLES_TO_FOLLOW = ['ryancohen',
-                         # 'GameStop', # they are literally just tweeting promotional stuff - don't follow them for now
-                         'GMEdd']
     LOG = logging.getLogger(__name__)
 
     def __init__(self, consume, test=False):
@@ -23,6 +20,8 @@ class TwitterFront(tweepy.Stream):
         access_token = os.environ["twitter_api_access_token"]
         access_token_secret = os.environ["twitter_api_access_token_secret"]
 
+        self.twitter_handles_to_follow = os.environ["twitter_handles_to_follow"].split()
+
         tweepy.Stream.__init__(self, consumer_key, consumer_secret, access_token, access_token_secret)
         self.LOG.info("Logged in!")
 
@@ -30,9 +29,9 @@ class TwitterFront(tweepy.Stream):
         client = tweepy.Client(bearer_token)
         self.user_ids_to_follow = list(
             map(lambda handle: client.get_user(username=handle).data.id,
-                self.HANDLES_TO_FOLLOW))
+                self.twitter_handles_to_follow))
 
-        self.LOG.info(f"These are the handles we're following: {self.HANDLES_TO_FOLLOW}")
+        self.LOG.info(f"These are the handles we're following: {self.twitter_handles_to_follow}")
         self.LOG.info(f"And these are their IDs: {self.user_ids_to_follow}")
 
         self.consume = consume
@@ -40,7 +39,7 @@ class TwitterFront(tweepy.Stream):
 
     # Inherited from tweepy.Stream
     def on_status(self, tweet):
-        if (not tweet.author.screen_name in self.HANDLES_TO_FOLLOW) and (not self.test):
+        if (not tweet.author.screen_name in self.twitter_handles_to_follow) and (not self.test):
             self.LOG.info(f"Ignoring tweet from author: {tweet.author.screen_name}")
             return
 
