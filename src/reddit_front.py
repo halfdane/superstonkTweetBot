@@ -25,7 +25,7 @@ class RedditFront:
         self.LOG.info(f'submitting to {self.subreddit.display_name}')
 
         for flair in self.subreddit.flair.link_templates:
-            if ("Social Media" in flair['text']):
+            if (os.environ["target_post_flair_substring"] in flair['text']):
                 self.flair = flair
 
         if (not hasattr(self, 'flair')):
