@@ -4,6 +4,8 @@ import logging
 
 import pytz
 
+from test_only_exception import TestOnlyException
+
 nyse = pytz.timezone('US/Eastern')
 
 
@@ -42,7 +44,7 @@ class TwitterFront(tweepy.Stream):
             self.LOG.info(f"Ignoring tweet from author: {tweet.author.screen_name}")
             return
 
-        url=f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+        url = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
         data = {
             'url': url,
             'screen_name': tweet.user.screen_name,
@@ -52,11 +54,15 @@ class TwitterFront(tweepy.Stream):
         self.LOG.info(f"consuming {data}")
         self.consume(data)
 
+        if self.test:
+            raise TestOnlyException
+
     def stream(self):
-        if (self.test):
+        if self.test:
             self.filter(track="Twitter")
         else:
             self.filter(follow=self.user_ids_to_follow, threaded=True)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

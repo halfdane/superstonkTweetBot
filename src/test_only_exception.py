@@ -1,0 +1,2 @@
+class TestOnlyException(StopIteration):
+    pass

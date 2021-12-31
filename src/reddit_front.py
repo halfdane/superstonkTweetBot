@@ -21,6 +21,7 @@ class RedditFront:
 
         self.reddit.validate_on_submit = True
         self.subreddit = self.reddit.subreddit(os.environ["target_subreddit"])
+        self.own_subreddit = self.reddit.subreddit("half_dane")
         self.LOG.info(f'submitting to {self.subreddit.display_name}')
 
         for flair in self.subreddit.flair.link_templates:
@@ -45,21 +46,20 @@ class RedditFront:
             title: {title}
             url: {url}
         """)
-        if (not self.test):
-            url_post = self.subreddit.submit(title=title, url=url, flair_id=flair_id)
 
-            image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
-            image_post = self.subreddit.submit_image(title=title, image_path=image_file, flair_id=flair_id)
+        url_post = self.subreddit.submit(title=title, url=url, flair_id=flair_id)
 
-            url_post.reply('\n'.join([
-                f"Image: {image_post.url}",
-                "  ",
-                f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
-                "  ",
-                f"If you have ideas on how to improve this bot, please post them as response to this comment"
-            ]))
+        image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
+        image_post = self.own_subreddit.submit_image(title=title, image_path=image_file)
+        self.screenshot_front.cleanup_screenshot(image_file)
 
-            image_post.delete()
+        url_post.reply('\n'.join([
+            f"Image: {image_post.url}",
+            "  ",
+            f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
+            "  ",
+            f"If you have ideas on how to improve this bot, please post them as response to this comment"
+        ]))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

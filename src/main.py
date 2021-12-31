@@ -24,7 +24,6 @@ def main(argv):
         message_thread = threading.Thread(target=redditFront.create_tweet_post, args=[data])
         message_thread.start()
 
-
     twitter_front = TwitterFront(handle_message, test=test)
     twitter_front.stream()
 
