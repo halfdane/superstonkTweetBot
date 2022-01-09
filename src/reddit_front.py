@@ -1,6 +1,7 @@
 import praw
 import os
 import logging
+import threading
 
 from screenshot import ScreenshotFront
 
@@ -37,6 +38,19 @@ class RedditFront:
 
         self.test = test
 
+    def add_screenshot(self, data, title, url_post):
+        image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
+        image_post = self.own_subreddit.submit_image(title=title, image_path=image_file)
+        self.screenshot_front.cleanup_screenshot(image_file)
+
+        url_post.reply('\n'.join([
+            f"Image: {image_post.url}",
+            "  ",
+            f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
+            "  ",
+            f"If you have ideas on how to improve this bot, please post them as response to this comment"
+        ]))
+
     def create_tweet_post(self, data):
         title = f"New Tweet from {data['screen_name']} [{data['created_at'].strftime('%Y-%m-%d %H:%M')}] - image in comments",
         url = data['url']
@@ -49,17 +63,9 @@ class RedditFront:
 
         url_post = self.subreddit.submit(title=title, url=url, flair_id=flair_id)
 
-        image_file = self.screenshot_front.take_screenshot(data['screen_name'], data['tweet_id'])
-        image_post = self.own_subreddit.submit_image(title=title, image_path=image_file)
-        self.screenshot_front.cleanup_screenshot(image_file)
+        message_thread = threading.Thread(target=self.add_screenshot, args=[data, title, url_post])
+        message_thread.start()
 
-        url_post.reply('\n'.join([
-            f"Image: {image_post.url}",
-            "  ",
-            f"Brought to you by halfdane's [SuperstonkTweetbot](https://github.com/halfdane/superstonkTweetBot)"
-            "  ",
-            f"If you have ideas on how to improve this bot, please post them as response to this comment"
-        ]))
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

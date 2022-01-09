@@ -1,6 +1,5 @@
 import sys, getopt, os
 import logging
-import threading
 
 from twitter_front import TwitterFront
 from reddit_front import RedditFront
@@ -19,12 +18,8 @@ def main(argv):
     if test:
         logging.info("Running in test mode")
 
-    redditFront = RedditFront(test=test)
-    def handle_message(data):
-        message_thread = threading.Thread(target=redditFront.create_tweet_post, args=[data])
-        message_thread.start()
-
-    twitter_front = TwitterFront(handle_message, test=test)
+    reddit_front = RedditFront(test=test)
+    twitter_front = TwitterFront(reddit_front.create_tweet_post, test=test)
     twitter_front.stream()
 
 
