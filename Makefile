@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 
+PROJECT=superstonkTweetBot
 RASPI_USER=pi@redditbot
 
 .PHONY: fake_run
@@ -13,16 +14,13 @@ run: venv
 .PHONY: ssh_deploy
 ssh_deploy:
 	ssh -t $(RASPI_USER) '\
-	cd superstonkTweetBot && \
+	cd $(PROJECT) && \
 	git pull --rebase && \
-	sudo systemctl restart superstonkTweetBot.service && \
-	cd  ../gmeOfficialTweetBot && \
-	git pull --rebase && \
-	sudo systemctl restart gamestopOfficialTweetBot.service'
+	sudo systemctl restart $(PROJECT).service'
 
 .PHONY: ssh_logs
 ssh_logs:
-	ssh -t $(RASPI_USER) 'journalctl -u superstonkTweetBot.service -f'
+	ssh -t $(RASPI_USER) 'journalctl -u $(PROJECT).service -f'
 
 .PHONY: log_server
 log_server:
@@ -30,13 +28,13 @@ log_server:
 
 .PHONY: ssh_install
 ssh_install:
-	ssh -t $(RASPI_USER) 'git clone https://github.com/halfdane/superstonkTweetBot.git'
+	ssh -t $(RASPI_USER) 'git clone https://github.com/halfdane/$(PROJECT).git'
 	scp .envrc $(RASPI_USER):~/$(PROJECT)
 	ssh -t $(RASPI_USER) '\
-	cd superstonkTweetBot && \
-	sudo cp superstonkTweetBot.service /lib/systemd/system/ && \
+	cd $(PROJECT) && \
+	sudo cp $(PROJECT).service /lib/systemd/system/ && \
 	sudo systemctl daemon-reload && \
-	sudo systemctl restart superstonkTweetBot.service'
+	sudo systemctl restart $(PROJECT).service'
 
 venv: venv/touchfile
 
